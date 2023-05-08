@@ -66,4 +66,50 @@ julia> Pkg.Registry.update()
 
 ## Implementation
 
-For implementation details, please see [`docs/internals.md`](docs/internals.md).
+```mermaid
+---
+title: PkgAuthentication state machine
+---
+stateDiagram-v2
+    direction LR
+
+    [*] --> NeedAuthentication
+
+    NeedAuthentication --> HasToken
+    NeedAuthentication --> NoAuthentication
+    note right of NeedAuthentication
+         This happens...This happens...
+         This happens...
+         This happens...a asd
+         This happens...as dasd asd sadasdasd
+         This happens...
+    end note
+
+    HasToken --> NeedRefresh
+    HasToken --> Success
+    note right of HasToken
+         This happens...This happens...
+         This happens...
+         This happens...a asd
+         This happens...as dasd asd sadasdasd
+         This happens...
+    end note
+
+    NeedRefresh --> NoAuthentication
+    NeedRefresh --> HasNewToken
+    NeedRefresh --> Failure
+
+    NoAuthentication --> RequestLogin
+    NoAuthentication --> Failure
+
+    HasNewToken --> HasNewToken
+    HasNewToken --> Success
+    HasNewToken --> Failure
+
+    RequestLogin --> ClaimToken
+    RequestLogin --> Failure
+
+    ClaimToken --> ClaimToken
+    ClaimToken --> HasNewToken
+    ClaimToken --> Failure
+```
